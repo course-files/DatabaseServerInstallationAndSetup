@@ -1281,6 +1281,22 @@ docker --version
 docker run hello-world
 ```
 
+#### Docker Login
+
+Execute the following to tell Docker NOT to use the credential store to manage credentials:
+
+```bash
+cp ~/.docker/config.json ~/.docker/config.json.bak
+sed -i '/"credsStore"/d' ~/.docker/config.json
+cat ~/.docker/config.json   # check that the JSON is still valid (no trailing comma)
+```
+
+Then login to Docker using your personal access token instead of using your password:
+
+```bash
+docker login
+```
+
 ------------------------------------------------------------------------
 
 ### C.2: Pull the PostgreSQL Image
@@ -1483,3 +1499,4 @@ Submit the PDF via the submission link by the deadline stated in class.
 | Docker container exits immediately | Port 5432 already in use by another PostgreSQL instance | Stop the local PostgreSQL service first: `sudo systemctl stop postgresql` (Linux) or use a different host port, e.g., `-p 5433:5432` |
 | `docker: command not found` | Docker not installed or not in PATH | Re-run the installation steps in Section C.1. On Linux, log out and back in after `usermod -aG docker $USER` |
 | Cannot ping the VM from the host | Host-Only adapter not attached | In VirtualBox Settings → Network → Adapter 2: set to Host-Only Adapter |
+| `error getting credentials - err: exec: "docker-credential-pass": executable file not found` | Docker is trying to use a credential helper that is not installed | Remove the `"credsStore"` line from `~/.docker/config.json`, then pull again |
