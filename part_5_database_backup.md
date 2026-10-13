@@ -613,7 +613,7 @@ Add these rows to the lab's Compliance Summary Checklist (numbering continues fr
 | 23 | A backup has been restored successfully | I.7 output: no errors, matching counts | s.41(4)(d), (e) | Art. 32(1)(c), (d) |
 | 24 | A failed backup is detected | I.6 failure output and the I.9 freshness check | s.41(4)(e), (f) | Art. 32(1)(d) |
 
-Add these to the Lab Deliverables:
+Additional Lab Deliverables:
 
 | # | Deliverable | What to include |
 | --- | ----------- | --------------- |
