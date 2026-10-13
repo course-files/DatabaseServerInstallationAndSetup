@@ -89,7 +89,7 @@ You should see something like `PostgreSQL version: 18`. If the directory contain
 
 ---
 
-## Part A — Encryption in Transit (TLS/SSL)
+## Part A: Encryption in Transit (TLS/SSL)
 
 **Legal basis:** s.41(4)(c) DPA 2019 requires encryption of personal data. s.42(1)(c) specifically addresses transmission of data over ICT networks. GDPR Art. 32(1)(a) requires "encryption of personal data" as an appropriate technical measure. GDPR Art. 32(1)(b) requires "the ongoing confidentiality, integrity, availability and resilience of processing systems and services."
 
@@ -463,13 +463,13 @@ to Part B: [Synthetic Data](part_3_synthetic_data.md)
 
 ---
 
-## Part B — Role-Based Access Control and Least Privilege
+## Part B: Role-Based Access Control and Least Privilege
 
 **Legal basis:** s.25(d) DPA 2019 requires that processing be "adequate, relevant, limited to what is necessary." s.41(1)(a) requires implementing data protection principles in an effective manner. GDPR Art. 5(1)(c) is the equivalent provision.
 
 ---
 
-### B.1 — Revoking the Default PUBLIC Permissions (Already Completed)
+### B.1: Revoking the Default PUBLIC Permissions (Already Completed)
 
 This step was completed when you executed the `siwaka_dishes.sql` DDL script. The following two statements were already run inside that script:
 
@@ -495,7 +495,7 @@ Expected result: `false`. If the result is `true`, the DDL script did not execut
 
 ---
 
-### B.2 — The Role Structure (Already Completed)
+### B.2: The Role Structure (Already Completed)
 
 This step was also completed in the DDL script. Four roles were created, each modelling a distinct tier of access:
 
@@ -542,7 +542,7 @@ Confirm you see `siwaka_dishes_analytics`, `siwaka_dishes_app_runtime`, and `siw
 
 ---
 
-### B.3 — Create Named Human Users
+### B.3: Create Named Human Users
 
 The four roles from B.2 are credentials for **system processes**, not for individual people. When a human needs direct database access — for auditing, incident investigation, or operational reporting — they must connect under their own named account, not a shared system credential.
 
@@ -573,7 +573,7 @@ GRANT siwaka_dishes_analytics TO auditor_atwoli;
 
 ---
 
-### B.4 — Block the Superuser from Remote Connections
+### B.4: Block the Superuser from Remote Connections
 
 The `postgres` superuser bypasses all permission checks, all row-level security policies, and all audit controls. It must never be reachable from the network. All superuser administration must go through SSH first and then connect locally.
 
@@ -605,7 +605,7 @@ sudo systemctl reload postgresql
 
 ---
 
-### B.5 — Verify Permissions
+### B.5: Verify Permissions
 
 **Test 1:** Confirm the auditor has read access but cannot write:
 
@@ -662,7 +662,7 @@ The `postgres` superuser is now reachable only from within the server itself via
 
 ---
 
-## Part C — Blocking the postgres Superuser from Remote Connections (Verification)
+## Part C: Blocking the postgres Superuser from Remote Connections (Verification)
 
 Verify that the reject rule from Part B is working correctly:
 
@@ -686,7 +686,7 @@ The `postgres` superuser is now reachable only from within the server itself (vi
 
 ---
 
-## Part D — Audit Logging with pgAudit
+## Part D: Audit Logging with pgAudit
 
 **Legal basis:** s.43(1)(a) DPA 2019 requires notifying the Data Commissioner of a personal data breach within 72 hours. This is only possible if you have audit logs showing what data was accessed, when, and by whom. s.43(8) requires recording "the facts relating to the breach, its effects, and the remedial action taken." Without audit logging, you cannot satisfy either requirement. GDPR Art. 33 contains an identical 72-hour notification obligation.
 
@@ -694,7 +694,7 @@ The `postgres` superuser is now reachable only from within the server itself (vi
 
 ---
 
-### D.1 — Install pgAudit
+### D.1: Install pgAudit
 
 ```bash
 sudo apt update
@@ -709,7 +709,7 @@ dpkg -l | grep pgaudit
 
 ---
 
-### D.2 — Configure pgAudit
+### D.2: Configure pgAudit
 
 pgAudit must be loaded at server startup via `shared_preload_libraries`. This requires a full restart (not just a reload):
 
@@ -745,7 +745,7 @@ sudo systemctl status postgresql
 
 ---
 
-### D.3 — Enable pgAudit per Database
+### D.3: Enable pgAudit per Database
 
 pgAudit must be activated as an extension in each database that should be audited:
 
@@ -761,7 +761,7 @@ sudo -u postgres psql -d siwaka_dishes -c "SELECT extname, extversion FROM pg_ex
 
 ---
 
-### D.4 — Enable Connection Logging
+### D.4: Enable Connection Logging
 
 Beyond statement logging (pgaudit), you can also log who connects and disconnects to the database:
 
@@ -788,7 +788,7 @@ The `log_line_prefix` format inserts the timestamp, process ID, user, database, 
 
 ---
 
-### D.5 — Test Audit Logging
+### D.5: Test Audit Logging
 
 Open a second SSH terminal and watch the log file in real time:
 
@@ -883,7 +883,7 @@ The final line (`disconnection: ...`) is not a pgAudit entry. It comes from `log
 
 ---
 
-### D.6 — Understanding Audit Log Retention
+### D.6: Understanding Audit Log Retention
 
 The audit log is only useful if it is retained long enough to investigate incidents. The DPA 2019 does not specify a retention period for audit logs, but standard practice is 12 months online and 7 years in archive. On Ubuntu, PostgreSQL logs rotate weekly by default. You can configure the rotation according to your needs.
 
@@ -914,7 +914,7 @@ In a production environment, audit logs are shipped to a **centralized and secur
 
 ---
 
-## Part E — Row-Level Security (RLS)
+## Part E: Row-Level Security (RLS)
 
 **Legal basis:** s.44–47 DPA 2019 impose additional requirements on sensitive personal data. Even within a database where a user has `SELECT` privilege on a table, they should see only the rows relevant to their role. s.25(d) reinforces data minimisation. GDPR Art. 5(1)(c) is the equivalent provision.
 
@@ -964,7 +964,7 @@ GRANT siwaka_dishes_app_runtime
 
 ---
 
-### E.1 — Enable Row-Level Security on the customer_order Table
+### E.1: Enable Row-Level Security on the customer_order Table
 
 ```bash
 sudo -u postgres psql -d siwaka_dishes
@@ -1002,7 +1002,7 @@ CREATE POLICY manager_full_access_policy
 
 ---
 
-### E.2 — Test Row-Level Security
+### E.2: Test Row-Level Security
 
 Before running the tests, find the actual `branch_code` values in the data:
 
@@ -1069,7 +1069,7 @@ SELECT COUNT(*) FROM customer_order;
 
 ---
 
-### E.3 — Enable RLS on the customer Table
+### E.3: Enable RLS on the customer Table
 
 Customer personal data — including names, phone numbers, and address details — is unambiguously personal data under s.2 of the DPA 2019. An assistant manager should be able to look up only the customers who have placed orders at their branch, not the entire customer base.
 
@@ -1144,13 +1144,13 @@ SELECT COUNT(*) FROM customer;
 
 ---
 
-## Part F — Password Policies
+## Part F: Password Policies
 
 **Legal basis:** s.41(4)(b) DPA 2019 requires establishing and maintaining "appropriate safeguards against identified risks." Weak passwords are a documented, foreseeable risk. GDPR Art. 32(1)(b) requires "the ability to ensure the ongoing confidentiality of processing systems." Brute-forced or guessed credentials directly undermine confidentiality.
 
 ---
 
-### F.1 — Enable the passwordcheck Module
+### F.1: Enable the passwordcheck Module
 
 `passwordcheck` is a PostgreSQL contributed module that intercepts `CREATE ROLE ... PASSWORD` and `ALTER ROLE ... PASSWORD` statements and rejects passwords that do not meet minimum complexity requirements:
 
@@ -1282,7 +1282,7 @@ SHOW shared_preload_libraries;
 
 ---
 
-### F.2 — Test Password Policy Enforcement
+### F.2: Test Password Policy Enforcement
 
 ```bash
 sudo -u postgres psql -d siwaka_dishes
@@ -1308,7 +1308,7 @@ DROP USER test_strong_policy;
 
 ---
 
-### F.3 — Set Password Expiry on Existing Users
+### F.3: Set Password Expiry on Existing Users
 
 The DPA 2019 does not prescribe a password rotation interval, but regular rotation limits the window of exposure if a credential is compromised. Set expiry dates on all accounts created in this lab:
 
@@ -1362,7 +1362,7 @@ ALTER ROLE auditor_atwoli
 
 ---
 
-## Part G — Data Retention Policy
+## Part G: Data Retention Policy
 
 **Legal basis:** s.39(1) DPA 2019 states that a data controller "shall retain personal data only as long as may be reasonably necessary to satisfy the purpose for which it is processed." s.39(2) requires deletion, erasure, anonymisation or pseudonymisation at the end of the retention period. GDPR Art. 5(1)(e) is equivalent: "storage limitation."
 
@@ -1370,7 +1370,7 @@ ALTER ROLE auditor_atwoli
 
 ---
 
-### G.1 — Document the Retention Policy
+### G.1: Document the Retention Policy
 
 Create a formal retention policy table within the database. This serves as an auditable record of the organisation's retention decisions:
 
@@ -1424,7 +1424,7 @@ SELECT * FROM data_retention_policy;
 
 ---
 
-### G.2 — Implement a Retention Procedure
+### G.2: Implement a Retention Procedure
 
 Create a stored procedure that a DBA or scheduled job can execute to apply the retention policy. Rather than deleting customer records outright — which may violate other legal obligations such as the requirement to retain financial records — this procedure **anonymizes** expired records by replacing personal identifiers with irreversible placeholders.
 
@@ -1483,7 +1483,7 @@ CALL apply_customer_retention_policy();
 
 ---
 
-### G.3 — Scheduling, Testing, and Verifying the Retention Policy
+### G.3: Scheduling, Testing, and Verifying the Retention Policy
 
 ---
 
@@ -2052,6 +2052,8 @@ sudo -u postgres psql -d siwaka_dishes \
 ```
 
 Both counts must be identical.
+
+Refer to [Automated, Encrypted Backups (Optional Extension)](part_5_database_backup.md) for more details on backup and restoration procedures.
 
 ---
 

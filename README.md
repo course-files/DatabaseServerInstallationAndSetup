@@ -69,6 +69,7 @@ Refer to the files below for more details:
 
 - [Data Protection and Compliance](part_2_data_protection_compliance.md)
 - [Synthetic Data](part_3_synthetic_data.md)
+- [Automated, Encrypted Backups (Optional Extension)](part_5_database_backup.md)
 - [Relational Algebra](part_4_relational_algebra.md)
 
 ## Lab Submission Instructions
