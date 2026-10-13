@@ -1888,7 +1888,7 @@ on every subsequent run. This is the correct behaviour.
 
 ## Part H — Backup Security
 
-**Legal basis:** s.41(4)(d) DPA 2019 requires "the ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident." The backup itself contains all the personal data in the database — an unencrypted backup file is as dangerous as an unencrypted database. GDPR Art. 32(1)(c) is equivalent.
+**Legal basis:** s.41(4)(d) DPA 2019 requires "the ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident." The backup itself contains all the personal data in the database. An unencrypted backup file is as dangerous as an unencrypted database. GDPR Art. 32(1)(c) is equivalent.
 
 ---
 
@@ -1915,7 +1915,11 @@ GRANT
 ON ALL SEQUENCES IN SCHEMA public
 TO siwaka_dishes_backup;
 
--- The backup user also needs to bypass RLS policies to read all rows. This is done by granting the BYPASSRLS attribute, which allows the user to see all data regardless of any row-level security policies in place. This is essential for a backup user to ensure that the backup captures the complete dataset without being restricted by RLS rules.
+-- The backup user also needs to bypass RLS policies to read all rows.
+-- This is done by granting the BYPASSRLS attribute, which allows the user to
+-- see all data regardless of any row-level security policies in place. This is
+-- essential for a backup user to ensure that the backup captures the complete
+-- dataset without being restricted by RLS rules.
 
 ALTER USER siwaka_dishes_backup BYPASSRLS;
 
@@ -1924,7 +1928,7 @@ SET ROLE siwaka_dishes_backup;
 SELECT COUNT(*) FROM data_retention_policy;
 SELECT COUNT(*) FROM customer;
 SELECT last_value FROM branch_branch_code_seq;
--- Expected: both return results with no permission error
+-- Expected: all return results with no permission error
 
 RESET ROLE;
 \q
@@ -1936,7 +1940,7 @@ RESET ROLE;
 
 ### H.2 — Create and Encrypt a Database Backup
 
-`gpg` (GNU Privacy Guard) is pre-installed on Ubuntu. Symmetric encryption with AES-256 requires only a passphrase — no PKI infrastructure is needed for this lab. PKI (Public Key Infrastructure) is a more complex encryption method that uses a pair of keys — public and private — for encryption and decryption. Symmetric encryption uses a single passphrase for both operations. It is simpler to implement while still providing strong security when a strong passphrase is used.
+`gpg` (GNU Privacy Guard) is pre-installed in Ubuntu. Symmetric encryption with AES-256 requires only a passphrase — no PKI infrastructure is needed for this lab. PKI (Public Key Infrastructure) is a more complex encryption method that uses a pair of keys — public and private — for encryption and decryption. Symmetric encryption uses a single passphrase for both operations. It is simpler to implement while still providing strong security when a strong passphrase is used.
 
 ```bash
 # Create the backup directory with restricted permissions
@@ -2009,29 +2013,37 @@ An unverified backup is not a backup — it is a "hope" 🙂.
 gpg --decrypt \
     ~/backups/siwaka_dishes_$(date +%Y%m%d).sql.gpg \
     > /tmp/siwaka_dishes_restore_test.sql
+```
 
+```bash
 # Create a clean test database to restore into
 sudo -u postgres psql -c "CREATE DATABASE siwaka_dishes_restore_test;"
+```
 
+```bash
 # Restore the dump into the test database
 psql -U postgres -h 127.0.0.1 -d siwaka_dishes_restore_test \
   < /tmp/siwaka_dishes_restore_test.sql
+```
 
+```bash
 # Verify the restoration succeeded
 sudo -u postgres psql -d siwaka_dishes_restore_test \
   -c "SELECT COUNT(*) FROM customer;"
 
 # Expected: a non-zero count matching the original database
-# This should be 301 without Row-Level Security.
+# This should be about 301 customers without Row-Level Security.
+# If the count matches the count in the production database, then we can
+# consider the backup as verified.
+```
 
+```bash
 # Clean up (Tear Down) — drop the test database and shred the decrypted file
 sudo -u postgres psql -c "DROP DATABASE siwaka_dishes_restore_test;"
 
 shred -vfz /tmp/siwaka_dishes_restore_test.sql && \
   rm /tmp/siwaka_dishes_restore_test.sql
 ```
-
-If the count matches the count in the production database, the backup is verified:
 
 ```bash
 # Compare against the production database
