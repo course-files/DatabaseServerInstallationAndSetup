@@ -1290,7 +1290,7 @@ sudo -u postgres psql -d siwaka_dishes
 
 ```sql
 -- Attempt to create a user with a trivially weak password
-CREATE USER  WITH PASSWORD '1234';
+CREATE USER test_weak_policy WITH PASSWORD '1234';
 -- Expected: ERROR: password is too short
 
 CREATE USER test_weak_policy WITH PASSWORD 'onlylowercase';
@@ -1426,7 +1426,7 @@ SELECT * FROM data_retention_policy;
 
 ### G.2 — Implement a Retention Procedure
 
-Create a stored procedure that a DBA or scheduled job can execute to apply the retention policy. Rather than deleting customer records outright — which may violate other legal obligations such as the requirement to retain financial records — this procedure **anonymises** expired records by replacing personal identifiers with irreversible placeholders.
+Create a stored procedure that a DBA or scheduled job can execute to apply the retention policy. Rather than deleting customer records outright — which may violate other legal obligations such as the requirement to retain financial records — this procedure **anonymizes** expired records by replacing personal identifiers with irreversible placeholders.
 
 ```bash
 sudo -u postgres psql -d siwaka_dishes
@@ -1448,27 +1448,27 @@ BEGIN
 
   v_cutoff_date := CURRENT_DATE - v_retention_days;
 
-  -- Anonymise customers whose last order predates the retention cutoff
+  -- Anonymize customers whose last order predates the retention cutoff
   -- and who have no orders after the cutoff date.
   -- customer_number is the correct primary key column name in this schema.
   UPDATE customer
   SET
-    customer_name       = 'ANONYMISED',
-    contact_first_name  = 'ANONYMISED',
-    contact_last_name   = 'ANONYMISED',
-    phone               = 'ANONYMISED'
+    customer_name       = 'ANONYMIZED',
+    contact_first_name  = 'ANONYMIZED',
+    contact_last_name   = 'ANONYMIZED',
+    phone               = 'ANONYMIZED'
   WHERE
     customer_number NOT IN (
       SELECT DISTINCT customer_number
       FROM customer_order
       WHERE order_date > v_cutoff_date
     )
-    AND contact_first_name != 'ANONYMISED';
-    -- Avoid re-processing records that have already been anonymised
+    AND contact_first_name != 'ANONYMIZED';
+    -- Avoids re-processing records that have already been anonymized
 
   GET DIAGNOSTICS v_rows_affected = ROW_COUNT;
 
-  RAISE NOTICE 'Retention policy applied: % customer record(s) anonymised. Cutoff date: %',
+  RAISE NOTICE 'Retention policy applied: % customer record(s) anonymized. Cutoff date: %',
     v_rows_affected, v_cutoff_date;
 END;
 $$;
@@ -1479,7 +1479,7 @@ CALL apply_customer_retention_policy();
 \q
 ```
 
-> **In production**, this procedure would be scheduled via `pg_cron` or a system cron job to run monthly. The execution and its output would be captured in the audit log (pgaudit records the procedure call) and the results stored in an operational log table. The anonymisation is irreversible by design — once applied, the personal identifiers cannot be recovered, which is the intent of s.39(2) DPA 2019.
+> **In production**, this procedure would be scheduled via `pg_cron` or a system cron job to run monthly. The execution and its output would be captured in the audit log (pgaudit records the procedure call) and the results stored in an operational log table. The anonymization is irreversible by design — once applied, the personal identifiers cannot be recovered, which is the intent of s.39(2) DPA 2019.
 
 ---
 
@@ -1589,6 +1589,12 @@ FROM cron.job;
 You should see one row with the job name `monthly-customer-retention` and
 `active = true`.
 
+```text
+ jobid |          jobname           | schedule  |                command                 | active
+-------+----------------------------+-----------+----------------------------------------+--------
+     1 | monthly-customer-retention | 0 3 1 * * | CALL apply_customer_retention_policy() | t
+```
+
 > **To unschedule the job** if ever needed:
 >
 > ```sql
@@ -1649,9 +1655,9 @@ LIMIT 1;
 Expected output:
 
 ```text
- customer_number |   customer_name    | contact_first_name | contact_last_name |     phone
------------------+--------------------+--------------------+-------------------+---------------
-            301 | Nyaga Holdings Ltd | Kizito          | Nyaga             | +254700000001
+ customer_number |         customer_name         | contact_first_name | contact_last_name |     phone
+-----------------+-------------------------------+--------------------+-------------------+---------------
+             310 | [Business] Nyaga Holdings Ltd | Kizito             | Nyaga             | +254700000001
 ```
 
 Store the `customer_number` for later reference.
@@ -1675,7 +1681,7 @@ SELECT :customer_number;
 #### Part 3: Create a Past Order Using a Database Transaction
 
 The retention procedure anonymizes customers whose **most recent order predates
-the configured retention cutoff**. You must therefore create an order dated
+the configured retention cutoff**. You must, therefore, create an order dated
 further in the past than the retention window.
 
 The transaction below demonstrates four key control-flow constructs:
@@ -1803,10 +1809,10 @@ CALL apply_customer_retention_policy();
 You should see a `NOTICE` similar to:
 
 ```text
-NOTICE:  Retention policy applied: 1 customer record(s) anonymised. Cutoff date: 2023-06-08
+NOTICE:  Retention policy applied: 1 customer record(s) anonymized. Cutoff date: 2023-06-08
 ```
 
-##### Step 3 — Confirm the customer record has been anonymised
+##### Step 3 — Confirm the customer record has been anonymized
 
 ```sql
 SELECT
@@ -1822,17 +1828,17 @@ WHERE customer_number = :customer_number;
 Expected output:
 
 ```text
- customer_number | customer_name | contact_first_name | contact_last_name |   phone    
+ customer_number | customer_name | contact_first_name | contact_last_name |   phone
 -----------------+---------------+--------------------+-------------------+------------
-             302 | ANONYMISED    | ANONYMISED         | ANONYMISED        | ANONYMISED
+             310 | ANONYMIZED    | ANONYMIZED         | ANONYMIZED        | ANONYMIZED
 ```
 
 All four personal identifier columns have been replaced with the irreversible
-placeholder `ANONYMISED`. The row itself is retained (preserving referential
+placeholder `ANONYMIZED`. The row itself is retained (preserving referential
 integrity with the order history and satisfying financial record-keeping
 obligations), but no personal data remains recoverable as per the retention policy.
 
-Note that the retention policy did not specify that `address_line1`, `postal_code`, `county`, `sub_county`, or `status` should be anonymised, so those columns remain unchanged. This is intentional — a policy can target only direct personal identifiers, not all data in the table.
+Note that the retention policy did not specify that `address_line1`, `postal_code`, `county`, `sub_county`, or `status` should be anonymized, so those columns remain unchanged. This is intentional. A policy can target only direct personal identifiers, not all data in the table.
 
 We can confirm this:
 
@@ -1855,11 +1861,11 @@ CALL apply_customer_retention_policy();
 Expected output:
 
 ```text
-NOTICE:  Retention policy applied: 0 customer record(s) anonymised. Cutoff date: 2023-06-08
+NOTICE:  Retention policy applied: 0 customer record(s) anonymized. Cutoff date: 2023-06-08
 ```
 
 Zero rows are affected because the `WHERE` clause filters out records where
-`contact_first_name != 'ANONYMISED'` — records already anonymised are skipped
+`contact_first_name != 'ANONYMIZED'` — records already anonymized are skipped
 on every subsequent run. This is the correct behaviour.
 
 ---
