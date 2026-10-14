@@ -1146,7 +1146,7 @@ Find all customers who have ordered **every product in the 'Fried Dishes' catego
 
 ## Lab Deliverable
 
-For each **exercise** (1 through 18), type the relational algebra expression and the SQL query into the same markdown file, i.e., `2_Relational_Algebra.md`, and submit this file as your lab deliverable. Ensure that you have run each SQL query against the database and verified that it returns the expected results.
+For each **exercise** (1 through 18), type the relational algebra expression and the SQL query into the same markdown file and submit this file as your lab deliverable. Ensure that you have run each SQL query against the database and verified that it returns the expected results.
 
 ---
 
