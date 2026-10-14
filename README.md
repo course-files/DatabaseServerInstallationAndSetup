@@ -1,4 +1,4 @@
-# Relational Algebra
+# Database Server Installation and Setup
 
 | Key             | Value                                                                                                                                                                                                                                                                           |
 |:----------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -62,25 +62,21 @@
 5 directories, 20 files
 ```
 
-## Setup Instructions
-
-- [Install PostgreSQL locally, in Ubuntu Server, and through a Docker container](part_1a_install_postgresql_in_ubuntu_server.md)
-
 ## Lab Manual
 
 Refer to the files below for more details:
 
-- [Data Protection and Compliance](part_2_data_protection_compliance.md)
-- [Synthetic Data](part_1b_synthetic_data.md)
-- [Automated, Encrypted Backups (Optional Extension)](part_3_database_backup.md)
-- [Relational Algebra](part_4_relational_algebra.md)
+1. [Install PostgreSQL locally, in Ubuntu Server, and through a Docker container](part_1a_install_postgresql_in_ubuntu_server.md)
+2. [Synthetic Data](part_1b_synthetic_data.md)
+3. [Data Protection and Compliance](part_2_data_protection_compliance.md)
+4. [Automated, Encrypted Backups (Optional Extension)](part_3_database_backup.md)
+5. [Relational Algebra](part_4_relational_algebra.md)
 
 ## Lab Submission Instructions
 
 Refer to the end of the file below for more details:
 
-- [Relational Algebra](part_4_relational_algebra.md)
-- [Data Protection and Compliance](part_2_data_protection_compliance.md)
+- [Relational Algebra](part_4_relational_algebra.md#lab-deliverable)
 
 ## Teardown Instructions (to be done after submitting the lab)
 
