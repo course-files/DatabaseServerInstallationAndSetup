@@ -459,7 +459,7 @@ WHERE pid = pg_backend_pid();
 ---
 
 **NOTE:** You need to load the synthetic data as guided here before you proceed
-to Part B: [Synthetic Data](part_3_synthetic_data.md)
+to Part B: [Synthetic Data](part_1b_synthetic_data.md)
 
 ---
 
@@ -2053,7 +2053,7 @@ sudo -u postgres psql -d siwaka_dishes \
 
 Both counts must be identical.
 
-Refer to [Automated, Encrypted Backups (Optional Extension)](part_5_database_backup.md) for more details on backup and restoration procedures.
+Refer to [Automated, Encrypted Backups (Optional Extension)](part_3_database_backup.md) for more details on backup and restoration procedures.
 
 ---
 

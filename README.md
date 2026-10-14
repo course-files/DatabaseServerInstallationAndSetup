@@ -39,9 +39,10 @@
 ├── RecommendedCitation.bib
 ├── assets
 │   ├── ERD_of_siwaka_dishes.pgerd
-│   └── ERD_of_siwaka_dishes_From_DataGrip.drawio
+│   ├── ERD_of_siwaka_dishes_From_DataGrip.drawio
+│   └── images
 ├── data
-│   └── 202605
+│   └── 202609
 │       ├── 0_a_DDL_siwaka_dishes_original.sql
 │       ├── 1_a_DML_general_data.sql
 │       ├── 1_c_DML_employee_data.sql
@@ -51,25 +52,27 @@
 │       ├── 5_b_DML_payment_data.sql
 │       ├── 6_b_DML_customer_feedback_data.sql
 │       └── 7_a_DDL_other_DB_objects.sql
-├── part_1_install_postgresql_in_ubuntu_server.md  ← Part 1 of the lab
-├── part_2_data_protection_compliance.md           ← Part 2 of the lab
-├── part_3_synthetic_data.md                       ← Part 3 of the lab
-└── part_4_relational_algebra.md                   ← Part 4 of the lab
+├── part_1a_install_postgresql_in_ubuntu_server.md  ← Part 1a of the lab
+├── part_1b_synthetic_data.md                       ← Part 1b of the lab
+├── part_2_data_protection_compliance.md            ← Part 2 of the lab
+├── part_3_database_backup.md                       ← Part 3 of the lab
+├── part_4_relational_algebra.md                    ← Part 4 of the lab
+└── replay_pid24584.log
 
-4 directories, 18 files
+5 directories, 20 files
 ```
 
 ## Setup Instructions
 
-- [Install PostgreSQL locally, in Ubuntu Server, and through a Docker container](part_1_install_postgresql_in_ubuntu_server.md)
+- [Install PostgreSQL locally, in Ubuntu Server, and through a Docker container](part_1a_install_postgresql_in_ubuntu_server.md)
 
 ## Lab Manual
 
 Refer to the files below for more details:
 
 - [Data Protection and Compliance](part_2_data_protection_compliance.md)
-- [Synthetic Data](part_3_synthetic_data.md)
-- [Automated, Encrypted Backups (Optional Extension)](part_5_database_backup.md)
+- [Synthetic Data](part_1b_synthetic_data.md)
+- [Automated, Encrypted Backups (Optional Extension)](part_3_database_backup.md)
 - [Relational Algebra](part_4_relational_algebra.md)
 
 ## Lab Submission Instructions
