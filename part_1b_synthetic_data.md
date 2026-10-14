@@ -8,7 +8,7 @@ This lab uses the **Siwaka Dishes** database, which models a multi-branch Kenyan
 
 ## Setting Up the Database
 
-Open the connection to the PostgreSQL DBMS in the VM using pgAdmin. This was created in Part 1 of the lab when we were installing PostgreSQL (*Refer to:* [part_1_install_postgresql_in_ubuntu_server.md](part_1a_install_postgresql_in_ubuntu_server.md)).
+Open the connection to the PostgreSQL DBMS in the VM using pgAdmin. This was created in Part 1 of the lab when we were installing PostgreSQL (*Refer to:* [part_1a_install_postgresql_in_ubuntu_server.md](part_1a_install_postgresql_in_ubuntu_server.md)).
 
 To do this, right-click on the `postgres` database and select `PSQL Tool` to open a new psql command line interface window.
 

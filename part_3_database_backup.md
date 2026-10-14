@@ -1,3 +1,5 @@
+# Securing PostgreSQL: Towards Compliance with the Kenya Data Protection Act 2019
+
 ## Part I: Automated, Encrypted Backups (Optional Extension)
 
 > **Optional.** This part is for students who want to learn how backups are set up in a professional environment. It follows Part H. Sections I.10 and I.11 contain rows for the lab's Compliance Summary Checklist and Troubleshooting table. All commands run over SSH on the Ubuntu Server VM.
