@@ -107,7 +107,7 @@ On the other hand, **OpenSSH is a complete suite of tools for secure remote acce
 
 Analogy: OpenSSL answers, "How do I encrypt this data?" while OpenSSH answers "How do I securely reach that machine?"
 
-### A.1. Install OpenSSL in Linux
+### A.1: Install OpenSSL in Linux
 
 Most Linux distributions ship with OpenSSL by default because system utilities depend on it. However, assuming that there is no OpenSSL installed, below are the installation steps in a Linux Server (Ubuntu server).
 
@@ -127,7 +127,7 @@ which openssl
 
 ---
 
-### Create a minimal OpenSSL config
+#### Create a minimal OpenSSL config
 
 This configuration creates a 2048-bit RSA, SHA-256 certificate for a local
 Ubuntu server, with SANs allowing it to be recognized under the specified
@@ -188,7 +188,7 @@ sudo cp /home/student/openssl.cnf /tmp/openssl.cnf
 chmod u=rw,g=r,o=r /tmp/openssl.cnf
 ```
 
-### A.2. Generate the public certificate using OpenSSL
+### A.2: Generate the public certificate using OpenSSL
 
 Run the following command in the bash terminal to generate the public certificate using OpenSSL:
 
@@ -262,7 +262,7 @@ The difference is that browsers trust your public certificate because they alrea
 
 ---
 
-### A.3 — Enable SSL in PostgreSQL
+### A.3: Enable SSL in PostgreSQL
 
 ```bash
 sudo -u postgres psql -c "ALTER SYSTEM SET ssl = on;"
@@ -285,7 +285,7 @@ Expected output: `on`
 
 ---
 
-### A.4 — Enforce SSL for Remote Connections
+### A.4: Enforce SSL for Remote Connections
 
 Enabling SSL allows clients to use it but it does not make it required by default. To make SSL mandatory for all connections from the Host-Only network, change the `host` keyword in `pg_hba.conf` to `hostssl`.
 
@@ -350,7 +350,7 @@ sudo systemctl reload postgresql
 
 ---
 
-### A.5 — Test SSL Enforcement
+### A.5: Test SSL Enforcement
 
 **Note:** Replace `192.168.56.104` with your VM's actual Host-Only IP address.
 
@@ -1496,7 +1496,7 @@ It should ship with `postgresql-contrib` by default, however, you can still inst
 sudo apt install -y postgresql-${PG_VER}-cron
 ```
 
-##### Step 1 — Add `pg_cron` to `shared_preload_libraries`
+##### Step 1: Add `pg_cron` to `shared_preload_libraries`
 
 You already edited `/etc/postgresql/18/main/postgresql.conf` in the previous section
 to add `passwordcheck`. Extend that same line to include `pg_cron`:
@@ -1511,7 +1511,7 @@ Find and update the line:
 shared_preload_libraries = 'pgaudit, passwordcheck, pg_cron' # (change requires restart)
 ```
 
-##### Step 2 — Tell `pg_cron` which database to use
+##### Step 2: Tell `pg_cron` which database to use
 
 In the same `postgresql.conf` file, add the following line (anywhere after the
 `shared_preload_libraries` setting):
@@ -1523,7 +1523,7 @@ cron.database_name = 'siwaka_dishes'
 This directs `pg_cron` to store its job metadata inside `siwaka_dishes` and to
 execute jobs there by default.
 
-##### Step 3 — Restart PostgreSQL
+##### Step 3: Restart PostgreSQL
 
 ```bash
 sudo systemctl restart postgresql
@@ -1535,7 +1535,7 @@ Confirm the server came back up cleanly:
 sudo systemctl status postgresql
 ```
 
-##### Step 4 — Create the `pg_cron` Extension
+##### Step 4: Create the `pg_cron` Extension
 
 Connect to `siwaka_dishes` as a superuser and create the extension:
 
@@ -1562,7 +1562,7 @@ FROM pg_available_extensions
 ORDER BY name ASC;
 ```
 
-##### Step 5 — Schedule the Retention Procedure
+##### Step 5: Schedule the Retention Procedure
 
 Schedule the procedure to run at **03:00 on the first day of every month**:
 
@@ -1574,7 +1574,7 @@ SELECT cron.schedule(
 );
 ```
 
-##### Step 6 — Verify the Scheduled Job
+##### Step 6: Verify the Scheduled Job
 
 ```sql
 SELECT
@@ -1766,7 +1766,7 @@ Expected output (similar to **NOT** identical to):
 
 #### Part 4: Apply the Retention Policy and Confirm Anonymization
 
-##### Step 1 — Check the configured retention period
+##### Step 1: Check the configured retention period
 
 ```sql
 SELECT table_name, retention_days
@@ -1777,7 +1777,7 @@ WHERE table_name = 'customer';
 The order you inserted is five years old, so it will fall outside any retention
 window of 3 years or fewer.
 
-##### Step 2 — Call the procedure
+##### Step 2: Call the procedure
 
 Confirm the customer data before anonymization:
 
@@ -1812,7 +1812,7 @@ You should see a `NOTICE` similar to:
 NOTICE:  Retention policy applied: 1 customer record(s) anonymized. Cutoff date: 2023-06-08
 ```
 
-##### Step 3 — Confirm the customer record has been anonymized
+##### Step 3: Confirm the customer record has been anonymized
 
 ```sql
 SELECT
@@ -1848,7 +1848,7 @@ FROM customer
 WHERE customer_number = :customer_number;
 ```
 
-##### Step 4 — Confirm the procedure is idempotent
+##### Step 4: Confirm the procedure is idempotent
 
 **Idempotent** means that running the same procedure multiple times has the same effect as running it once. In this case, once a record is anonymised, subsequent runs of the procedure should not change it further.
 
@@ -1886,13 +1886,13 @@ on every subsequent run. This is the correct behaviour.
 
 ---
 
-## Part H — Backup Security
+## Part H: Backup Security
 
 **Legal basis:** s.41(4)(d) DPA 2019 requires "the ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident." The backup itself contains all the personal data in the database. An unencrypted backup file is as dangerous as an unencrypted database. GDPR Art. 32(1)(c) is equivalent.
 
 ---
 
-### H.1 — Verify and Complete Backup User Permissions
+### H.1: Verify and Complete Backup User Permissions
 
 Before running `pg_dump`, confirm that `siwaka_dishes_backup` has `SELECT` on every table currently in the schema — including any created after the initial DDL script was executed.
 
@@ -1938,7 +1938,7 @@ RESET ROLE;
 
 ---
 
-### H.2 — Create and Encrypt a Database Backup
+### H.2: Create and Encrypt a Database Backup
 
 `gpg` (GNU Privacy Guard) is pre-installed in Ubuntu. Symmetric encryption with AES-256 requires only a passphrase — no PKI infrastructure is needed for this lab. PKI (Public Key Infrastructure) is a more complex encryption method that uses a pair of keys — public and private — for encryption and decryption. Symmetric encryption uses a single passphrase for both operations. It is simpler to implement while still providing strong security when a strong passphrase is used.
 
@@ -2003,7 +2003,7 @@ ls -alh ~/backups/
 
 ---
 
-### H.3 — Verify the Encrypted Backup Can Be Restored
+### H.3: Verify the Encrypted Backup Can Be Restored
 
 An unverified backup is not a backup — it is a "hope" 🙂.  
 **Always test restoration before declaring the backup process complete**.
